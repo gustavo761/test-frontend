@@ -12,10 +12,12 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
 import { useRouter } from "next/router"
+import { useAlerts } from '../../utils';
 
 const theme = createTheme();
 
 export default function CrearCuenta() {
+  const { Alerta } = useAlerts()
   const router = useRouter();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,10 +37,15 @@ export default function CrearCuenta() {
       })
       if (result.data.finalizado) {
         router.push('/account/login')
+        Alerta({ mensaje: 'Registro realizado correctamente', variant: 'success' })
+      } else {
+        // console.log('imprimiendo error',result.data.messaje)
+        Alerta({ mensaje: `${result.data.messaje}`, variant: 'error' })
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message)
+        // console.log(error.message)
+        Alerta({ mensaje: `${error.message}`, variant: 'error' })
       }
     }
   };
@@ -61,7 +68,7 @@ export default function CrearCuenta() {
           <Typography component="h1" variant="h5">
             Crear cuenta
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -91,7 +98,6 @@ export default function CrearCuenta() {
                   id="email"
                   label="Correo Electrónico"
                   name="email"
-                  autoComplete="email"
                 />
               </Grid>
               <Grid item xs={12}>

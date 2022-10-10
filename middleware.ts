@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 export default function middleware(req: NextRequest) {
   let verify = req.cookies.get('jwttoken') || ''
   // const verify = localStorage.getItem('jwttoken')
-  console.log('imprimiento cookie', verify)
+  // console.log('imprimiento cookie', verify)
   let url = req.url || ''
 
   if (verify && url.includes('/login')) {

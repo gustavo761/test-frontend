@@ -13,19 +13,21 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
 import { useRouter } from "next/router"
 import Cookies from 'js-cookie';
+import { useAlerts } from '../../utils';
 
 const theme = createTheme();
 
 export default function IniciarSesion() {
 
+  const { Alerta } = useAlerts()
   const router = useRouter();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      correoElectronico: data.get('email'),
-      contrasena: data.get('password'),
-    });
+    // console.log({
+    //   correoElectronico: data.get('email'),
+    //   contrasena: data.get('password'),
+    // });
     const email: string = data.get('email') + '' || ''
     const contrasena: string = data.get('password') + '' || ''
     try {
@@ -38,18 +40,21 @@ export default function IniciarSesion() {
           contrasena: contrasena
         }
       })
-      console.log(result.data.finalizado)
+      // console.log(result.data.finalizado)
       if (result.data.finalizado) {
         const token: string = result.data.data.token
         Cookies.set('jwttoken', token)
         // localStorage.setItem('jwttoken', token)
+        Alerta({ mensaje: 'Iniciando sesión', variant: 'success' })
         router.push('/')
       } else {
-        throw new Error(result.data.data.message)
+        // throw new Error(result.data.message)
+        Alerta({ mensaje: `${result.data.message}`, variant: 'error' })
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message)
+        // console.log(error.message)
+        Alerta({ mensaje: `${error.message}`, variant: 'error' })
       }
     }
   };
@@ -72,7 +77,7 @@ export default function IniciarSesion() {
           <Typography component="h1" variant="h5">
             Iniciar Sesión
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
